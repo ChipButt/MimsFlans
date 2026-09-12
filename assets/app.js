@@ -1,10 +1,13 @@
 const files={site:'content/site.json',hours:'content/hours.json',drinks:'content/drinks.json',menu:'content/menu.json',events:'content/events.json',features:'content/features.json',gallery:'content/gallery.json',theme:'content/theme.json'};
+const EDITOR_DATA_URL='https://script.google.com/macros/s/AKfycbzz7FWTrjHkH8LUCrEElzr1MFCN9lN408-C_wC2o2FAU5j8HYXd43uUBgUHRDsiB78/exec';
+const EDITOR_SITE_ID='mims-flans';
 const load=async p=>{const r=await fetch(p,{cache:'no-store'});if(!r.ok)throw new Error(`${p}: ${r.status}`);return r.json()};
 const txt=(selector,value)=>document.querySelectorAll(selector).forEach(el=>el.textContent=value??'');
 const esc=value=>String(value??'').replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));
 const imgPath=value=>String(value||'').startsWith('/')?'.'+value:value;
 
 function renderSite(s){
+  if(!s)return;
   Object.entries(s).forEach(([k,v])=>typeof v==='string'&&txt(`[data-site="${k}"]`,v));
   const pageTitle=document.body.dataset.pageTitle;
   document.title=pageTitle?`${pageTitle} | ${s.name}`:(s.seoTitle||s.name);
@@ -21,39 +24,45 @@ function renderSite(s){
 
 const mins=t=>{const [h,m]=String(t||'').split(':').map(Number);return Number.isFinite(h)&&Number.isFinite(m)?h*60+m:null};
 function renderHours(data){
-  const grid=document.querySelector('[data-hours-grid]');if(grid)grid.innerHTML=data.hours.map(x=>`<div class="hours-row"><strong>${esc(x.day)}</strong><span>${esc(x.closed?'Closed':x.display)}</span></div>`).join('');
+  if(!data)return;
+  const grid=document.querySelector('[data-hours-grid]');if(grid)grid.innerHTML=(data.hours||[]).map(x=>`<div class="hours-row"><strong>${esc(x.day)}</strong><span>${esc(x.closed?'Closed':x.display)}</span></div>`).join('');
   txt('[data-hours-note]',data.note||'');
   const status=document.querySelector('[data-today-status]');if(!status)return;
-  const now=new Date(),day=now.toLocaleDateString('en-GB',{weekday:'long'}),row=data.hours.find(h=>h.day===day);
+  const now=new Date(),day=now.toLocaleDateString('en-GB',{weekday:'long'}),row=(data.hours||[]).find(h=>h.day===day);
   if(!row){txt('[data-today-status]','See opening hours');return}
   if(row.closed){txt('[data-today-status]','Closed today');txt('[data-today-hours]','');return}
   const current=now.getHours()*60+now.getMinutes(),open=mins(row.opens),close=mins(row.closes);
   const isOpen=open!==null&&close!==null&&(close>open?current>=open&&current<close:current>=open||current<close);
   txt('[data-today-status]',isOpen?'Open now':'Closed now');txt('[data-today-hours]',row.display);
 }
-function renderDrinks(d){/* retained for HospoLP compatibility; this client has no public drinks section */}
+function renderDrinks(d){/* Mim's Flans intentionally has no public drinks page. */}
 function renderMenu(d){
-  const section=document.querySelector('[data-food-section]');if(!section)return;
+  if(!d)return;const section=document.querySelector('[data-food-section]');if(!section)return;
   if(!d.enabled){section.hidden=true;return}
   section.hidden=false;txt('[data-food="heading"]',d.heading);txt('[data-food="intro"]',d.intro);
   const target=document.querySelector('[data-menu-sections]');if(target)target.innerHTML=(d.sections||[]).map(s=>`<div class="menu-block"><h3>${esc(s.name)}</h3>${(s.items||[]).filter(i=>i.available).map(i=>`<div class="menu-item"><div><strong>${esc(i.name)}</strong><p>${esc(i.description)}</p></div><b>${esc(i.price)}</b></div>`).join('')}</div>`).join('');
 }
-function renderEvents(d){
-  txt('[data-events="intro"]',d.intro);
-  const target=document.querySelector('[data-event-grid]');if(target)target.innerHTML=(d.items||[]).filter(x=>x.enabled).map(x=>`<article class="card"><small>${esc(x.when)}</small><h3>${esc(x.title)}</h3><p>${esc(x.description)}</p></article>`).join('');
-}
-function renderFeatures(d){const target=document.querySelector('[data-feature-strip]');if(target)target.innerHTML=(d.items||[]).filter(x=>x.enabled).map(x=>`<span>${esc(x.label)}</span>`).join('')}
+function renderEvents(d){if(!d)return;txt('[data-events="intro"]',d.intro);const target=document.querySelector('[data-event-grid]');if(target)target.innerHTML=(d.items||[]).filter(x=>x.enabled).map(x=>`<article class="card"><small>${esc(x.when)}</small><h3>${esc(x.title)}</h3><p>${esc(x.description)}</p></article>`).join('')}
+function renderFeatures(d){if(!d)return;const target=document.querySelector('[data-feature-strip]');if(target)target.innerHTML=(d.items||[]).filter(x=>x.enabled).map(x=>`<span>${esc(x.label)}</span>`).join('')}
 function renderGallery(d){
-  const section=document.querySelector('[data-gallery-section]');if(!section)return;
+  if(!d)return;const section=document.querySelector('[data-gallery-section]');if(!section)return;
   if(!d.enabled||!(d.items||[]).length){section.hidden=true;return}
   section.hidden=false;const target=document.querySelector('[data-gallery-grid]');if(!target)return;
   target.innerHTML=d.items.map((x,i)=>`<button class="gallery-item" type="button" data-gallery-index="${i}" aria-label="View ${esc(x.alt)}"><img src="${esc(imgPath(x.image))}" alt="${esc(x.alt)}" loading="lazy"></button>`).join('');
   target.onclick=e=>{const b=e.target.closest('[data-gallery-index]');if(!b)return;const item=d.items[Number(b.dataset.galleryIndex)];openLightbox({...item,image:imgPath(item.image)})};
 }
-function theme(t){Object.entries({primary:t.primary,'primary-2':t.primaryDark,accent:t.accent,alert:t.alert,paper:t.paper,'paper-deep':t.paperDeep,surface:t.surface,ink:t.ink,muted:t.muted,line:t.line}).forEach(([k,v])=>v&&document.documentElement.style.setProperty(`--${k}`,v))}
+function theme(t){if(!t)return;Object.entries({primary:t.primary,'primary-2':t.primaryDark,accent:t.accent,alert:t.alert,paper:t.paper,'paper-deep':t.paperDeep,surface:t.surface,ink:t.ink,muted:t.muted,line:t.line}).forEach(([k,v])=>v&&document.documentElement.style.setProperty(`--${k}`,v))}
 function openLightbox(item){const dialog=document.querySelector('[data-lightbox]'),img=document.querySelector('[data-lightbox-image]');if(!dialog||!img)return;img.src=item.image;img.alt=item.alt||'';dialog.showModal()}
-document.querySelector('[data-lightbox-close]')?.addEventListener('click',()=>document.querySelector('[data-lightbox]')?.close());
-document.querySelector('[data-lightbox]')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.close()});
+document.querySelector('[data-lightbox-close]')?.addEventListener('click',()=>document.querySelector('[data-lightbox]')?.close());document.querySelector('[data-lightbox]')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.close()});
 
-Promise.all(Object.values(files).map(load)).then(([s,h,d,m,e,f,g,t])=>{renderSite(s);renderHours(h);renderDrinks(d);renderMenu(m);renderEvents(e);renderFeatures(f);renderGallery(g);theme(t);txt('[data-current-year]',new Date().getFullYear())}).catch(err=>{console.error(err);const error=document.querySelector('[data-load-error]');if(error)error.hidden=false;txt('[data-current-year]',new Date().getFullYear())});
+function applyData(d){if(!d)return;renderSite(d.site);renderHours(d.hours);renderDrinks(d.drinks);renderMenu(d.menu);renderEvents(d.events);renderFeatures(d.features);renderGallery(d.gallery);theme(d.theme);txt('[data-current-year]',new Date().getFullYear())}
+function loadEditorData(){return new Promise((resolve,reject)=>{const cb=`__hospolp_${Date.now()}_${Math.random().toString(36).slice(2)}`;const script=document.createElement('script');const timer=setTimeout(()=>finish(new Error('Editor data timed out')),3500);function finish(err,data){clearTimeout(timer);delete window[cb];script.remove();err?reject(err):resolve(data)}window[cb]=data=>finish(null,data);script.onerror=()=>finish(new Error('Editor data unavailable'));script.src=`${EDITOR_DATA_URL}?mode=content&site=${encodeURIComponent(EDITOR_SITE_ID)}&callback=${encodeURIComponent(cb)}&t=${Date.now()}`;document.head.appendChild(script)})}
+
+Promise.all(Object.values(files).map(load)).then(([site,hours,drinks,menu,events,features,gallery,themeData])=>{
+  const fallback={site,hours,drinks,menu,events,features,gallery,theme:themeData};
+  applyData(fallback);
+  loadEditorData().then(applyData).catch(()=>{});
+}).catch(err=>{console.error(err);const error=document.querySelector('[data-load-error]');if(error)error.hidden=false;txt('[data-current-year]',new Date().getFullYear())});
+
+window.addEventListener('message',e=>{if(e.data&&e.data.type==='hospolp-preview'&&e.data.data)applyData(e.data.data)});
 const toggle=document.querySelector('.nav-toggle'),nav=document.querySelector('.primary-nav');toggle?.addEventListener('click',()=>{nav.classList.toggle('open');toggle.setAttribute('aria-expanded',String(nav.classList.contains('open')))});nav?.addEventListener('click',e=>{if(e.target.matches('a')){nav.classList.remove('open');toggle?.setAttribute('aria-expanded','false')}});
