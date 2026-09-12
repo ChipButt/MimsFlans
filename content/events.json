@@ -1,0 +1,7 @@
+{
+  "intro": "People often eat flan here. Occasionally, other things happen too.",
+  "items": [
+    {"enabled":true,"title":"Flan eating","when":"Regularly","description":"The principal activity. Order flan, eat flan, consider another flan."},
+    {"enabled":true,"title":"Mim plays the drums","when":"Occasionally","description":"There is no fixed schedule. Sometimes Mim plays the drums. That's part of the charm."}
+  ]
+}

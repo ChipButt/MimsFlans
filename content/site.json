@@ -1,0 +1,22 @@
+{
+  "name": "Mim’s Flans",
+  "locationLine": "Hazel Avenue · Flan Street",
+  "heroEyebrow": "Just flan",
+  "strapline": "Homemade flan, made with love. And eggs.",
+  "shortWelcome": "Friendly, relaxed and very serious about flan.",
+  "primaryMessage": "We sell flan.",
+  "aboutHeading": "A lifelong commitment to flan.",
+  "aboutLead": "Mim is passionate about flan, so Mim makes flan. It really is that simple.",
+  "aboutBody": "Expect a friendly, relaxed café with one clear priority: a proper caramel flan. Sometimes there are chilli peppers. Sometimes there are drums. The flan remains constant.",
+  "facts": ["Made with love", "Made with eggs", "Dog friendly", "Bicycle parking"],
+  "address": "Hazel Avenue\nFlan Street",
+  "phone": "07850 755568",
+  "email": "miriamelizabeth@hotmail.co.uk",
+  "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Hazel+Avenue+Flan+Street",
+  "seoTitle": "Mim's Flans | Just Flan",
+  "seoDescription": "Mim's Flans: homemade caramel flan, made with love and eggs in a friendly, relaxed café.",
+  "reviewQuote": "My husband likes my flan.",
+  "reviewCredit": "A review from someone who knows",
+  "footerNote": "Opening hours are intentionally unpredictable, so check before travelling.",
+  "notice": {"enabled": true, "title": "No drinks.", "text": "Mim prefers her customers parched."}
+}
