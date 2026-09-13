@@ -22,6 +22,11 @@
       ]}
     ]},
     {"id":"about","label":"About","url":"about.html","groups":[
+      {"label":"Page banner","fields":[
+        {"label":"Eyebrow text","type":"text","path":"site.aboutBannerEyebrow"},
+        {"label":"Banner heading","type":"text","path":"site.aboutBannerTitle"},
+        {"label":"Banner introduction","type":"textarea","path":"site.aboutBannerLead"}
+      ]},
       {"label":"About","fields":[
         {"label":"Heading","type":"text","path":"site.aboutHeading"},
         {"label":"Introduction","type":"textarea","path":"site.aboutLead"},
@@ -29,6 +34,11 @@
       ]}
     ]},
     {"id":"menu","label":"Flan","url":"menu.html","groups":[
+      {"label":"Page banner","fields":[
+        {"label":"Eyebrow text","type":"text","path":"site.menuBannerEyebrow"},
+        {"label":"Banner heading","type":"text","path":"site.menuBannerTitle"},
+        {"label":"Banner introduction","type":"textarea","path":"site.menuBannerLead"}
+      ]},
       {"label":"Menu","fields":[
         {"label":"Menu heading","type":"text","path":"menu.heading"},
         {"label":"Introduction","type":"textarea","path":"menu.intro"},
@@ -36,18 +46,31 @@
       ]}
     ]},
     {"id":"hours","label":"Hours","url":"hours.html","groups":[
+      {"label":"Page banner","fields":[
+        {"label":"Eyebrow text","type":"text","path":"site.hoursBannerEyebrow"},
+        {"label":"Banner heading","type":"text","path":"site.hoursBannerTitle"}
+      ]},
       {"label":"Opening Hours","fields":[
         {"label":"Hours note","type":"textarea","path":"hours.note"},
         {"label":"Weekly hours","type":"hours","path":"hours.hours"}
       ]}
     ]},
     {"id":"events","label":"What's On","url":"whats-on.html","groups":[
+      {"label":"Page banner","fields":[
+        {"label":"Eyebrow text","type":"text","path":"site.eventsBannerEyebrow"},
+        {"label":"Banner heading","type":"text","path":"site.eventsBannerTitle"}
+      ]},
       {"label":"Events","fields":[
         {"label":"Introduction","type":"textarea","path":"events.intro"},
         {"label":"Events","type":"events","path":"events.items"}
       ]}
     ]},
     {"id":"visit","label":"Visit","url":"visit.html","groups":[
+      {"label":"Page banner","fields":[
+        {"label":"Eyebrow text","type":"text","path":"site.visitBannerEyebrow"},
+        {"label":"Banner heading","type":"text","path":"site.visitBannerTitle"},
+        {"label":"Banner introduction","type":"textarea","path":"site.visitBannerLead"}
+      ]},
       {"label":"Contact","fields":[
         {"label":"Address","type":"textarea","path":"site.address"},
         {"label":"Phone","type":"text","path":"site.phone"},
